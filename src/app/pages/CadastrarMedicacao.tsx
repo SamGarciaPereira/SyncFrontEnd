@@ -132,7 +132,7 @@ export function CadastrarMedicacao() {
   const query = search.trim();
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
+    <form onSubmit={handleSubmit} noValidate className="mx-auto lg:max-w-3xl">
       <PageHeader
         title="Cadastrar medicação"
         subtitle="Adicione um novo medicamento ao sistema."
@@ -175,6 +175,7 @@ export function CadastrarMedicacao() {
                 onChange={setSearch}
                 placeholder="Digite o nome do princípio ativo ou apelido..."
                 aria-label="Pesquisar medicamento"
+                className="max-w-lg"
               />
               <p className="mt-4 text-sm font-medium text-heading">
                 {query ? "Encontrados no catálogo" : "Sugestões"}
@@ -231,13 +232,13 @@ export function CadastrarMedicacao() {
                 value={doseAmount}
                 onChange={(e) => setDoseAmount(e.target.value)}
                 aria-label="Dosagem"
-                className="flex-1"
+                className="flex-none basis-28"
               />
               <SelectField
                 value={doseUnit}
                 onChange={(e) => setDoseUnit(e.target.value as DosageUnit)}
                 aria-label="Unidade da dosagem"
-                containerClassName="w-44 shrink-0"
+                containerClassName="flex-1"
               >
                 {allowedUnits.map((unit) => (
                   <option key={unit} value={unit}>
@@ -261,7 +262,7 @@ export function CadastrarMedicacao() {
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
               aria-label="Quantidade em estoque"
-              className="flex-1"
+              className="flex-none basis-28"
             />
             <span className="w-40 shrink-0 text-muted">
               {STOCK_UNIT_LABELS[selected ? selected.form : form]}
