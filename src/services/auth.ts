@@ -5,6 +5,7 @@ export interface User {
   name: string;
   email: string;
   birthDate: string | null;
+  phone: string | null;
   activatedAt: string | null;
 }
 
@@ -13,6 +14,7 @@ export interface SignUpInput {
   email: string;
   password: string;
   birthDate: string; // "AAAA-MM-DD"
+  phone: string;
 }
 
 /** Calls to the API's /users, /sessions and /user routes. */

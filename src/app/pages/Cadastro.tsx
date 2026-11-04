@@ -12,6 +12,23 @@ import { getApiErrorMessage } from "../../services/errors";
 const MIN_PASSWORD_LENGTH = 6; // same rule as the API
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const onlyDigits = (value: string) => value.replace(/\D/g, "");
+
+/** Máscara enquanto digita: (41) 99999-8888 */
+function formatPhone(value: string): string {
+  const d = onlyDigits(value).slice(0, 11);
+  if (d.length === 0) return "";
+  if (d.length <= 2) return `(${d}`;
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+function isValidPhone(value: string): boolean {
+  const d = onlyDigits(value);
+  return /^[1-9]{2}/.test(d) && (d.length === 10 || (d.length === 11 && d[2] === "9"));
+}
+
 /** Today as "AAAA-MM-DD" in the local timezone (limit for the birth date). */
 function today(): string {
   const now = new Date();
@@ -25,6 +42,7 @@ export function Cadastro() {
 
   const [name, setName] = useState("");
   const [birthDate, setBirthDate] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -38,6 +56,7 @@ export function Cadastro() {
       return "Confira a data de nascimento.";
     }
     if (!EMAIL_REGEX.test(email.trim())) return "Informe um e-mail válido (ex.: maria@email.com).";
+    if (!isValidPhone(phone)) return "Informe um telefone válido com DDD (ex.: (41) 99999-8888).";
     if (password.length < MIN_PASSWORD_LENGTH) {
       return `A senha deve ter pelo menos ${MIN_PASSWORD_LENGTH} caracteres.`;
     }
@@ -54,7 +73,7 @@ export function Cadastro() {
     setSubmitting(true);
     try {
       // Creates the account and logs in right away
-      await signUp({ name: name.trim(), email: email.trim(), password, birthDate });
+      await signUp({ name: name.trim(), email: email.trim(), password, birthDate, phone: onlyDigits(phone)});
       navigate("/app", { replace: true });
     } catch (err) {
       setError(getApiErrorMessage(err));
@@ -101,6 +120,23 @@ export function Cadastro() {
             value={birthDate}
             onChange={(e) => setBirthDate(e.target.value)}
           />
+        </div>
+
+        <div>
+          <FieldLabel htmlFor="signup-phone">Telefone (WhatsApp)</FieldLabel>
+          <TextField
+            id="signup-phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel-national"
+            placeholder="(41) 99999-8888"
+            aria-describedby="signup-phone-hint"
+            value={phone}
+            onChange={(e) => setPhone(formatPhone(e.target.value))}
+          />
+          <p id="signup-phone-hint" className="mt-1.5 text-sm text-muted">
+            Usado para avisos no WhatsApp e contato de emergência.
+          </p>
         </div>
 
         <div>
