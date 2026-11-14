@@ -159,6 +159,31 @@ export function findNextDose(meds: Medication[], now = new Date()): NextDose | n
   return null;
 }
 
+export interface DoseOccurrence {
+  medicationId: number;
+  name: string;
+  time: string; // "HH:mm"
+  dosageLabel: string;
+}
+
+/** All scheduled doses for a given day (default: today), ordered by time. */
+export function dosesForDay(meds: Medication[], date = new Date()): DoseOccurrence[] {
+  const weekday = date.getDay();
+  return meds
+    .filter((m) => !m.isConditional)
+    .flatMap((m) =>
+      m.schedules
+        .filter((s) => s.daysOfWeek.includes(weekday))
+        .map((s) => ({
+          medicationId: m.id,
+          name: displayName(m),
+          time: s.time,
+          dosageLabel: formatDose(m.dosageAmount, m.dosageUnit),
+        })),
+    )
+    .sort((a, b) => a.time.localeCompare(b.time));
+}
+
 /* ---------- Two-step register flow (Cadastrar → Quando tomar) ---------- */
 
 export interface MedicationDraft {
