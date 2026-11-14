@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import { isAxiosError } from "axios";
 import { api } from "../../services/api";
 import { authService, type SignUpInput, type User } from "../../services/auth";
+import { disablePush } from "../../services/push";
 import { AuthContext, type AuthContextValue } from "./authContext";
 
 /** Keeps the logged-in user for the whole app (read from the session cookie). */
@@ -52,6 +53,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async () => {
     try {
+      // Para de notificar este aparelho enquanto a sessão ainda é válida.
+      await disablePush().catch(() => {});
       await authService.signOut();
     } finally {
       setUser(null);
