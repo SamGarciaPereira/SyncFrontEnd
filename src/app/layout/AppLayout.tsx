@@ -4,11 +4,13 @@ import { Sidebar } from "./Sidebar";
 import { MobileHeader } from "./MobileHeader";
 import { BottomNav } from "./BottomNav";
 import { ProfileMenu } from "./ProfileMenu";
+import { AlarmProvider } from "../alarm/AlarmProvider";
 
 /** Responsive shell: sidebar on desktop, header + bottom tabs on mobile. */
 export function AppLayout() {
   return (
-    <div className="app-shell flex min-h-svh">
+    <AlarmProvider>
+      <div className="app-shell flex min-h-svh">
       <Sidebar />
 
       <div className="flex min-h-svh min-w-0 flex-1 flex-col">
@@ -31,6 +33,7 @@ export function AppLayout() {
 
         <BottomNav />
       </div>
-    </div>
+      </div>
+    </AlarmProvider>
   );
 }
